@@ -1,0 +1,6 @@
+solutions
+__pycache__
+*pytest*
+others
+.DS_Store
+lightning_logs
