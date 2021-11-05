@@ -14,13 +14,13 @@
 
 \begin{document}
 
-{\noindent\LARGE Exercise 4\par}
+{\noindent\LARGE Exercise 5\par}
 \vspace{8pt}
-{\noindent\huge\textbf{Local Explanations}}
+{\noindent\huge\textbf{Shapley}}
 \vspace{20pt}
 
 \noindent
-Local interpretable model-agnostic explanations (LIME) and Anchors are powerful tools to explain local regions. While LIME trains a local (interpretable) surrogate model to imitate the model's behavior, Anchors explain instances by areas with high precision and coverage. This exercise aims to gain more insight into how the methods work and to sensitize your awareness of potential problems.
+Shapley values tell us how to distribute the “payout” among features fairly. In this exercise, we are going to implement methods to calculate the Shapley values in a theoretical and a practical setting. After finishing this exercise, you have a fundamental understanding of how Shapley works, how to implement a basic version, and how to interpret the results.
 
 
 \vspace{10pt}
@@ -30,95 +30,114 @@ Local interpretable model-agnostic explanations (LIME) and Anchors are powerful 
     \item Three collected bonus points result in a 0.33 increase of the final grade.
     \item You are allowed to work in groups with up to three people. You do not need to specify your ErgebnisPIN as it is already collected from the entrance test.
     \item Follow the `README.md` for further instructions.
-    \item Finish this exercise by 10th November, 2021 at 11:59 pm.
+    \item Finish this exercise by 17th November, 2021 at 11:59 pm.
 \end{itemize}
 \par\noindent\rule{\textwidth}{0.2pt}
 \vspace{8pt}
 
 
-\section{Local Interpretable Model-Agnostic Explanations}
+\section{Cooperative Games}
+\label{section:cg}
 
-In the following, you are guided to visualize LIME to interpret a Multi-Layer Perceptron. We use two features and explore LIME on a multi-classification problem.\\
-
-\noindent Associated file: \textit{tasks/custom\_lime.py}.
-
-\subsection{Prepare Mesh Data}
-
-\noindent First of all, we prepare data to visualize the feature space. Theoretically speaking, we create a $N\times N$ grid, and every point in this grid is associated with a value. This value is obtained by the model's predict method.\\
-
-\noindent Span a linear space for $x_i$ and $y_i$ with $0 \leq i \leq N$ in the method \textit{get\_mesh}. The first feature is associated with the x-axis, whereas the second feature is to the y-axis. Ignore all other features. Consider the lower and upper bounds using the configspace and ensure the values $z$ are in the correct shape. Equation~\ref{eq:grid} shows the shape more precisely. $\mathcal{M}(x_i, y_j)$ is the prediction from the $i$-th $x$ value and the $j$-th $y$ value. 
-
-\begin{equation}
-z
-=
-\begin{bmatrix}
-\mathcal{M}(x_0, y_0) & \dots & \mathcal{M}(x_N, y_0)\\
-\vdots & \ddots & \vdots\\
-\mathcal{M}(x_0, y_N) & \dots & \mathcal{M}(x_N, y_N)\\
-\end{bmatrix}
-\label{eq:grid}
-\end{equation}
-
-
-\subsection{Plot Color Mesh}
-
-After calculating the color values, we want to apply the values in the function \textit{plot\_mesh}. Use \textit{pcolormesh} with \textit{viridis} as colors and make sure you deactivate the grid.
-
-
-\subsection{Sample Points}
-
-Next, we sample points, which are later used to train the local surrogate model. Complete
-\textit{sample\_points} by randomly sampling from a uniform distribution. Consider the lower and
-upper bounds from the configspace again. Having a detailed look into the API will save you a lot of time.
-
-
-\subsection{Weight Points}
-
-Given a selected point $\hat{x}$ and the sampled points $X$ from the previous task, we now want to weight the points. Use the following equation with $d$ as Euclidean distance to calculate the weight of a single point $x_i \in X$:
-
-\begin{equation}
-    n(x_i) = exp(-d(\hat{x}, x_i)^2/\sigma^2).
-    \label{eq:dist}
-\end{equation}
-
-\noindent To make plotting easier later on, the weights should be normalized between zero and one. Finally, return the normalized weights in \textit{weight\_points}.
-
-
-\subsection{Plot Points}
-
-Complete \textit{plot\_points\_in\_mesh} by adding the sampled (weighted) points into the plot. Make sure that both the selected point (POI) and all classes appear once in the legend (you should not call legend here as it is done in the main function). Should a $y$ value not appear in $colors$ use black as default color. Use red for the selected point. Moreover, the size of the markers should be the weight multiplied by the default marker size.
-
-
-\subsection{Fit Local Surrogate}
-
-Finally, fit a decision tree with training data and weights. Return the fitted tree in the function \textit{fit\_explainer\_model}. What could be problematic?
-
-
-\section{Anchors}
-
-In this section, we use the framework \href{https://github.com/marcotcr/anchor}{anchor-exp} to explain instances and to visualize them inside our plots.\\
-
-\noindent Associated file: \textit{tasks/anchors.py}.
-
-
-\subsection{Retrieve Explanations}
-
-Use \textit{AnchorTabularExplainer} in \textit{get\_explanation} to explain an instance. In our case, an instance is a selected point. Have a look into the API and work with the returned explanation.\\
-
-\noindent Because the framework returns human-friendly text only, we have to prepare the data for our plot. Use \href{https://docs.python.org/3/howto/regex.html}{regex} to extract the information into a dictionary. Following patterns with $A$ as feature name placeholder and $v_-$ and $v_+$ as lower and upper values are possible:
+To understand the basics of Shapley, we implement the original Shapley algorithm for cooperative games. Given a set of players $P$ with $p$ players, important notations are explained briefly:
 
 \begin{itemize}
-    \item $A < v_+$,
-    \item $A > v_-$,
-    \item $v_- < A < v_+$.
+    \item $S \subseteq P$ forms a coalition with $0 \leq |S| \leq p$ players. 
+    \item $v(S): 2^{|P|}\mapsto \mathbb{R}$ describes the payout achieved by coalition $S$.
+    \item $\phi_j$ is the shapley value of player $j \in P$.
 \end{itemize}
 
-\noindent Since also $\leq$ and $\geq$ appears in the patterns, simply replace them with $<$ or $>$, respectively. Return the dictionary s.t. each feature name is mapped to a tuple of lower and upper bound. However, make sure all labels are included and all lower and upper bounds are set.
+\noindent Associated file: \textit{tasks/cooperative\_game.py}.
+
+\subsection{Original Implementation}
+
+Return the shapley value based on the original implementation from player  $j \in P$ in function \textit{get\_shapley} with the following equation:
+
+\begin{equation}
+    \phi_j = \sum_{S \subseteq P - \{j\} } \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(S \cup \{j\}) - v(S)).
+    \label{eq:original}
+\end{equation}
+
+\noindent Make sure you round the value. For testing purposes, also all combinations without player $j$ should be returned.
 
 
-\subsection{Plot Anchors}
+\subsection{Implementation via Orders}
 
-The precision, coverage and bounds from the previous function should now be used to visualize an anchor in \textit{plot\_anchor}. Add four lines by using \textit{plt.plot} and a text with precision and coverage. Think about the meaning of precision and coverage.
+Next, we want to calculate the shapley value via order permutations. Use the following equation the complete function \textit{get\_shapley\_by\_order}:
+
+\begin{equation}
+    \phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j))).
+    \label{eq:order}
+\end{equation}
+
+$Pre(\tau,j)$ is the set of players before player $j$ joins the coalition. The order is given by $\tau$. Since mathematically speaking, Equation~\ref{eq:original} and \ref{eq:order} are the same, the same result is expected. To that means, also round the value exactly as you did before.\\
+
+\noindent To identify if you solved the task via orders, return a list of sets, including all players, before $j$ is added for all permutation orders. Abort the algorithm after $M$ steps.
+
+
+\subsection{Axioms}
+
+In this subsection, we want to identify whether the Shapley values or specific sets fulfill the axioms. Please complete the functions \textit{check\_symmetry}, \textit{check\_dummy}, \textit{check\_additivity}, \textit{check\_efficiency}, all of which return a Boolean value.
+
+
+
+\subsubsection{Symmetry} Two features with the same contribution have the same payouts. For $S \subseteq P - \{j,k\}$ and $v(S \cup \{j\}) -  v(S) = v(S \cup \{k\}) -  v(S)$, the following equation is satisfied:
+
+\begin{equation}
+    v(S \cup \{j\}) - v(S) = v(S \cup \{k\}) -  v(S).
+\end{equation}
+
+
+\subsubsection{Dummy} Player $j \in S  \subseteq P$ with no contribution has also no payout:
+
+\begin{equation}
+    v(S) = v(S \cup \{j\})
+\end{equation}
+
+\subsubsection{Additivity} If two games $v_1$ and $v_2$ are the result of $v$ then the two equations with $S \subseteq P - \{j\}$ are fulfilled:
+
+\begin{equation}
+    v(S) = v_1(S) + v_2(S)
+\end{equation}
+
+\begin{equation}
+v(S \cup \{j\}) - v(S) = v_1(S \cup \{j\}) - v_1(S) + v_2(S \cup \{j\}) - v_2(S)
+\end{equation}
+
+
+\subsubsection{Efficiency} Player contributions add up to the total payout of the game:
+
+\begin{equation}
+    \sum\nolimits_{j=1}^p\phi_j = v(P)
+\end{equation}
+
+
+\section{Model-Agnostic}
+
+The implementation from Task~\ref{section:cg} is working nicely but only for sets. In this section, we implement the Shapley algorithm for all predictive models using the estimation implementation.
+
+\noindent Associated file: \textit{tasks/model\_agnostic.py}.
+
+\subsection{Preparation}
+
+The estimation algorithm is based on order permutations. In the function \textit{merge}, we are implementing a step, which is called later on. Having two arrays $A = (a_1, \ldots, a_p)$ and $B = (b_1, \ldots, b_p)$, make sure you achieve the following behavior:
+
+\begin{equation}
+    \mathbf{x}_{+j} = (a_1, \ldots, a_{j-1}, a_j, b_{j+1}, \ldots, b_{p})
+\end{equation}
+
+\begin{equation}
+    \mathbf{x}_{-j} = (a_1, \ldots, a_{j-1}, b_j, b_{j+1}, \ldots, b_{p})
+\end{equation}
+
+
+\subsection{Estimation Algorithm}
+
+Perform now the estimation algorithm for an arbitrary model. In every step you have to sample a random instance $z \in X$ using \textit{np.random.choice}. Use then \textit{np.random.permutation} to get a permutation order for both given point $x$ and random instance $z$. Those two steps are important to ensure correct testing. Otherwise follow the steps on Slide 7 in the lecture and use the function \textit{merge} from the previous task.\\
+
+\noindent Also, integrate $M$ in your algorithm. $M$ aborts the algorithm prematurely after $M$ steps. If $M$ is not given use the number of entries in $X$ or return zero if no steps are requested.\\
+
+\noindent Warning: Remember to permutate the arrays back before predicting.
 
 
 \end{document}
