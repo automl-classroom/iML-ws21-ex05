@@ -149,6 +149,5 @@ if __name__ == "__main__":
     print("---", check_additivity(S, 2, v, v1, v2))
 
     print("Check efficiency ...")
-
     def v(S): return get_value(S, COMB1)
     print("---", check_efficiency(P, v))

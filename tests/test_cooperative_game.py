@@ -110,10 +110,10 @@ def test_check_efficiency():
 
 
 if __name__ == "__main__":
-    # test_get_shapley()
-    # test_get_shapley_by_order()
-    # test_get_shapley_by_order_approx()
+    test_get_shapley()
+    test_get_shapley_by_order()
+    test_get_shapley_by_order_approx()
     test_check_symmetry()
-    # test_check_dummy()
-    # test_check_additivity()
-    # test_check_efficiency()
+    test_check_dummy()
+    test_check_additivity()
+    test_check_efficiency()
