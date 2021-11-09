@@ -3,7 +3,7 @@ import os  # noqa
 sys.path.insert(0, ".")  # noqa
 
 from utils.shapley import get_value
-from datasets.shapley import COMB1, COMB2, COMB3, COMB7, COMB8, COMB9
+from datasets.shapley import COMB1, COMB3, COMB13, COMB14, COMB15, COMB16
 import itertools
 import numpy as np
 from math import factorial
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         print(f"--- P{j}: {shapley[0]}")
 
     print("Check symmetry ...")
-    def v(S): return get_value(S, COMB2)
+    def v(S): return get_value(S, COMB16)
     print("---", check_symmetry(P, 2, 3, v))
 
     print("Check dummy ...")
@@ -143,9 +143,9 @@ if __name__ == "__main__":
     print("---", check_dummy(S, 2, v))
 
     print("Check additivity ...")
-    def v(S): return get_value(S, COMB7)
-    def v1(S): return get_value(S, COMB8)
-    def v2(S): return get_value(S, COMB9)
+    def v(S): return get_value(S, COMB13)
+    def v1(S): return get_value(S, COMB14)
+    def v2(S): return get_value(S, COMB15)
     print("---", check_additivity(S, 2, v, v1, v2))
 
     print("Check efficiency ...")

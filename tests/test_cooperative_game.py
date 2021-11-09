@@ -3,7 +3,7 @@ import os  # noqa
 sys.path.insert(0, ".")  # noqa
 
 from utils.shapley import get_value
-from datasets.shapley import COMB1, COMB2, COMB3, COMB4, COMB5, COMB6, COMB7, COMB8, COMB9, COMB10, COMB11, COMB12
+from datasets.shapley import COMB1, COMB2, COMB3, COMB4, COMB5, COMB6, COMB7, COMB8, COMB9, COMB10, COMB11, COMB12, COMB13, COMB14, COMB15, COMB16
 from tests.config import WORKING_DIR
 
 module = __import__(f"{WORKING_DIR}.cooperative_game", fromlist=[
@@ -52,13 +52,16 @@ def test_check_symmetry():
     P = [1, 2, 3]
 
     def v(S): return get_value(S, COMB2)
-    assert module.check_symmetry(P, 2, 3, v)
+    assert not module.check_symmetry(P, 2, 3, v)
 
     def v(S): return get_value(S, COMB1)
     assert not module.check_symmetry(P, 2, 3, v)
 
     def v(S): return get_value(S, COMB8)
     assert not module.check_symmetry(P, 2, 3, v)
+
+    def v(S): return get_value(S, COMB16)
+    assert module.check_symmetry(P, 2, 3, v)
 
 
 def test_check_dummy():
@@ -82,6 +85,11 @@ def test_check_additivity():
     def v(S): return get_value(S, COMB7)
     def v1(S): return get_value(S, COMB8)
     def v2(S): return get_value(S, COMB9)
+    assert not module.check_additivity(S, 2, v, v1, v2)
+
+    def v(S): return get_value(S, COMB13)
+    def v1(S): return get_value(S, COMB14)
+    def v2(S): return get_value(S, COMB15)
     assert module.check_additivity(S, 2, v, v1, v2)
 
 
@@ -102,10 +110,10 @@ def test_check_efficiency():
 
 
 if __name__ == "__main__":
-    test_get_shapley()
-    test_get_shapley_by_order()
-    test_get_shapley_by_order_approx()
+    # test_get_shapley()
+    # test_get_shapley_by_order()
+    # test_get_shapley_by_order_approx()
     test_check_symmetry()
-    test_check_dummy()
-    test_check_additivity()
-    test_check_efficiency()
+    # test_check_dummy()
+    # test_check_additivity()
+    # test_check_efficiency()

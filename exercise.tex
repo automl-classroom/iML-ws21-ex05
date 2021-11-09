@@ -81,7 +81,7 @@ In this subsection, we want to identify whether the Shapley values or specific s
 
 
 
-\subsubsection{Symmetry} Two features with the same contribution have the same payouts. For $S \subseteq P - \{j,k\}$ and $v(S \cup \{j\}) -  v(S) = v(S \cup \{k\}) -  v(S)$, the following equation is satisfied:
+\subsubsection{Symmetry} Two features with the same contribution have the same payouts. For $S \subseteq P - \{j,k\}$, the following equation is satisfied:
 
 \begin{equation}
     v(S \cup \{j\}) - v(S) = v(S \cup \{k\}) -  v(S).
@@ -114,7 +114,7 @@ v(S \cup \{j\}) - v(S) = v_1(S \cup \{j\}) - v_1(S) + v_2(S \cup \{j\}) - v_2(S)
 
 \section{Model-Agnostic}
 
-The implementation from Task~\ref{section:cg} is working nicely but only for sets. In this section, we implement the Shapley algorithm for all predictive models using the estimation implementation.
+The implementation from Task~\ref{section:cg} is working nicely but only for sets. In this section, we implement the Shapley algorithm for all predictive models using the estimation implementation.\\
 
 \noindent Associated file: \textit{tasks/model\_agnostic.py}.
 
@@ -133,11 +133,11 @@ The estimation algorithm is based on order permutations. In the function \textit
 
 \subsection{Estimation Algorithm}
 
-Perform now the estimation algorithm for an arbitrary model. In every step you have to sample a random instance $z \in X$ using \textit{np.random.choice}. Use then \textit{np.random.permutation} to get a permutation order for both given point $x$ and random instance $z$. Those two steps are important to ensure correct testing. Otherwise follow the steps on Slide 7 in the lecture and use the function \textit{merge} from the previous task.\\
+Perform now the estimation algorithm for an arbitrary model. Sample random instances $z \in X$ using \textit{np.random.choice} and iterate over them. Use then \textit{np.random.permutation} to get a permutation order for both given point $x$ and random instance $z$. Those two steps are important to ensure correct testing. Otherwise follow the steps on Slide 7 (Estimation Algorithm) in the lecture and use the function \textit{merge} from the previous task.\\
 
 \noindent Also, integrate $M$ in your algorithm. $M$ aborts the algorithm prematurely after $M$ steps. If $M$ is not given use the number of entries in $X$ or return zero if no steps are requested.\\
 
-\noindent Warning: Remember to permutate the arrays back before predicting.
+\noindent Warning: Remember to permutate back the arrays before predicting.
 
 
 \end{document}
