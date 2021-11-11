@@ -27,8 +27,18 @@ def test_get_shapley_by_order():
     value, S_all = module.get_shapley_by_order(P, P[3], v)
 
     assert value == 31.25
-    assert S_all[-9] == set((2, 3))
-    assert S_all[1] == set((1, 2))
+
+    count_2 = 0
+    count_3 = 0
+    for S in S_all:
+        if S == set((2, 3)):
+            count_2 += 1
+
+        if S == set((1, 2, 3)):
+            count_3 += 1
+
+    assert count_2 == 2
+    assert count_3 == 6
 
 
 def test_get_shapley_by_order_approx():
@@ -38,14 +48,22 @@ def test_get_shapley_by_order_approx():
     value, S_all = module.get_shapley_by_order(P, P[3], v, M=24)
 
     assert value == 31.25
-    assert S_all[-9] == set((2, 3))
-    assert S_all[1] == set((1, 2))
+
+    count_2 = 0
+    count_3 = 0
+    for S in S_all:
+        if S == set((2, 3)):
+            count_2 += 1
+
+        if S == set((1, 2, 3)):
+            count_3 += 1
+
+    assert count_2 == 2
+    assert count_3 == 6
 
     value, S_all = module.get_shapley_by_order(P, P[3], v, M=10)
 
     assert value == 44.7
-    assert S_all[0] == set((1, 2, 3))
-    assert S_all[-1] == set((2, 3))
 
 
 def test_check_symmetry():
